@@ -3,6 +3,7 @@ package com.example.nayantiwari.todoapplication;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.icu.util.Calendar;
 import android.support.design.widget.FloatingActionButton;
@@ -13,18 +14,22 @@ import android.util.Log;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.nayantiwari.todoapplication.data.ToDoListContract;
+import com.example.nayantiwari.todoapplication.data.ToDoListDbHelper;
 
 import java.util.Date;
 
 public class AddNewToDoActivity extends AppCompatActivity {
 
-    private SQLiteDatabase mDb;
+
+
+    LinearLayout timeAndDateInfoLinearLayout;
 
     private int year;
     private int month;
@@ -35,12 +40,14 @@ public class AddNewToDoActivity extends AppCompatActivity {
     String amPm;
 
     EditText mDate;
+    TextView atDisplay;
     EditText mTime;
 
     String selectedDate, selectedTime;
 
     Date mUserReminderDate;
 
+    Cursor cursor;
     Switch aSwitch;
 
     EditText enterToDoEditText;
@@ -48,23 +55,28 @@ public class AddNewToDoActivity extends AppCompatActivity {
     FloatingActionButton floatingActionButton;
 
     TextView mTimeDateMessage;
+    private Cursor allToDo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_to_do);
 
+        timeAndDateInfoLinearLayout = (LinearLayout) findViewById(R.id.time_and_date_ll);
+
         floatingActionButton = (FloatingActionButton) findViewById(R.id.fab2);
 
         mDate = (EditText) findViewById(R.id.date_et);
+        atDisplay = (TextView) findViewById(R.id.at_tv);
         mTime = (EditText) findViewById(R.id.time_et);
 
         aSwitch = (Switch) findViewById(R.id.switch1);
 
+//        cursor = getAllToDo();
+
         mTimeDateMessage = (TextView) findViewById(R.id.date_time_tv);
 
         enterToDoEditText = (EditText) findViewById(R.id.enter_todo_et);
-
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -147,6 +159,17 @@ public class AddNewToDoActivity extends AppCompatActivity {
                 }
             }
         });
+
+        aSwitch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!aSwitch.isChecked()) {
+                    timeAndDateInfoLinearLayout.setVisibility(View.GONE);
+                } else {
+                    timeAndDateInfoLinearLayout.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
 
@@ -169,19 +192,12 @@ public class AddNewToDoActivity extends AppCompatActivity {
             addNewToDo(enterToDoEditText.getText().toString(), null, null, false);
     }
 
-    private long addNewToDo(String title, String selectedDate, String selectedTime, boolean checked) {
-        ContentValues cv = new ContentValues();
-        cv.put(ToDoListContract.ToDoListEntry.COLUMN_TITLE, title);
-        cv.put(ToDoListContract.ToDoListEntry.COLUMN_TODO_DATE, selectedDate);
-        cv.put(ToDoListContract.ToDoListEntry.COLUMN_TODO_TIME, selectedTime);
-        cv.put(ToDoListContract.ToDoListEntry.COLUMN_IS_REMINDER, checked);
-
-        return mDb.insert(ToDoListContract.ToDoListEntry.TABLE_NAME, null, cv);
-    }
 
     public void setToDoWithoutReminder() {
         Toast.makeText(this, "Todo Saved without setting reminder", Toast.LENGTH_SHORT).show();
     }
+
+
 
 //    void hideKeyboard(EditText editText) {
 //        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
