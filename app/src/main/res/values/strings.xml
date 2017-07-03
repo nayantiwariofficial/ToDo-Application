@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ToDoApplication</string>
+    <string name="placeholder_image">Placeholder Image</string>
+    <string name="action_settings">Settings</string>
+    <string name="remind_me">Remind me</string>
+    <string name="alarm_clock_icon">Alarm Clock Icon</string>
+    <string name="settings">Settings</string>
+</resources>

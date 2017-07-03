@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreference
+        android:id="@+id/app_theme_settings"
+        android:key="theme"
+        android:summaryOff="White"
+        android:summaryOn="Black"
+        android:title="Application Theme" />
+</PreferenceScreen>
