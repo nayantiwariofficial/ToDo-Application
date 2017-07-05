@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/toolbar1"
             android:layout_width="match_parent"
             android:layout_height="200dp">
 
@@ -24,29 +24,33 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Title" />
+                    android:text="Title"
+                    android:textColor="@android:color/white" />
 
                 <EditText
                     android:id="@+id/enter_todo_et"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="32dp"
-                    android:hint="Enter ToDo" />
+                    android:hint="Enter ToDo"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@color/lessWhite" />
 
             </LinearLayout>
         </android.support.v7.widget.Toolbar>
+
 
     </android.support.design.widget.AppBarLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab2"
-        android:tint="@android:color/white"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_margin="16dp"
+        android:layout_width="54dp"
+        android:layout_height="54dp"
+        android:layout_marginEnd="16dp"
         android:src="@drawable/ic_send_black_24dp"
-        app:layout_anchor="@id/toolbar"
-        app:layout_anchorGravity="bottom|end" />
+        android:tint="@android:color/white"
+        app:layout_anchor="@id/toolbar1"
+        app:layout_anchorGravity="bottom|end"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -72,28 +76,28 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/remind_me"
                 android:layout_margin="16dp"
+                android:text="@string/remind_me"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Title" />
 
             <Switch
                 android:id="@+id/switch1"
-                android:layout_margin="16dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:layout_margin="16dp"
                 android:layout_marginStart="100dp"
-                android:checked="false"/>
+                android:checked="false" />
 
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/time_and_date_ll"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <EditText
                 android:id="@+id/date_et"
@@ -101,12 +105,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:hint="7/3/2017"
                 android:clickable="false"
                 android:cursorVisible="false"
                 android:focusable="false"
-                android:focusableInTouchMode="false"/>
+                android:focusableInTouchMode="false"
+                android:gravity="center"
+                android:hint="7/3/2017" />
 
             <TextView
                 android:id="@+id/at_tv"
@@ -114,7 +118,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="\@"
-                android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline" />
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+                android:textColor="@android:color/holo_blue_dark"
+                android:textSize="18sp" />
 
             <EditText
                 android:id="@+id/time_et"
@@ -122,12 +128,12 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:hint="11:00 PM"
                 android:clickable="false"
                 android:cursorVisible="false"
                 android:focusable="false"
-                android:focusableInTouchMode="false"/>
+                android:focusableInTouchMode="false"
+                android:gravity="center"
+                android:hint="11:00 PM" />
 
         </LinearLayout>
 

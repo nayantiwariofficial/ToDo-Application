@@ -26,11 +26,11 @@ public class ToDoListDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
 
         final String SQL_CREATE_TODOLIST_TABLE = "CREATE TABLE " + ToDoListEntry.TABLE_NAME + "(" +
-                ToDoListEntry._ID + "INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ToDoListEntry.COLUMN_TITLE + "TEXT NOT NULL, " +
-                ToDoListEntry.COLUMN_TODO_DATE + "TEXT, " +
-                ToDoListEntry.COLUMN_TODO_TIME + "TEXT, " +
-                ToDoListEntry.COLUMN_IS_REMINDER + "INTEGER NOT NULL " +
+                ToDoListEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                ToDoListEntry.COLUMN_TITLE + " TEXT NOT NULL, " +
+                ToDoListEntry.COLUMN_TODO_DATE + " TEXT, " +
+                ToDoListEntry.COLUMN_TODO_TIME + " TEXT, " +
+                ToDoListEntry.COLUMN_IS_REMINDER + " INTEGER NOT NULL " +
                 ");" ;
 
         db.execSQL(SQL_CREATE_TODOLIST_TABLE);

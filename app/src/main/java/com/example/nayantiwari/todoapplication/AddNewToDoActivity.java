@@ -3,6 +3,7 @@ package com.example.nayantiwari.todoapplication;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.icu.util.Calendar;
@@ -28,7 +29,6 @@ import java.util.Date;
 public class AddNewToDoActivity extends AppCompatActivity {
 
 
-
     LinearLayout timeAndDateInfoLinearLayout;
 
     private int year;
@@ -37,30 +37,33 @@ public class AddNewToDoActivity extends AppCompatActivity {
 
     private int hour;
     private int min;
-    String amPm;
+    private String amPm;
 
-    EditText mDate;
-    TextView atDisplay;
-    EditText mTime;
+    private EditText mDate;
+    private TextView atDisplay;
+    private EditText mTime;
 
-    String selectedDate, selectedTime;
+    private String selectedDate, selectedTime;
 
-    Date mUserReminderDate;
+    private EditText titleEditText;
+    private Switch aSwitch;
+    private EditText dateEditText;
+    private EditText timeEditText;
 
-    Cursor cursor;
-    Switch aSwitch;
+    private EditText enterToDoEditText;
 
-    EditText enterToDoEditText;
+    private FloatingActionButton floatingActionButton;
 
-    FloatingActionButton floatingActionButton;
-
-    TextView mTimeDateMessage;
-    private Cursor allToDo;
+    private TextView mTimeDateMessage;
+    private SQLiteDatabase mDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_new_to_do);
+
+        ToDoListDbHelper dbHelper = new ToDoListDbHelper(this);
+        mDb = dbHelper.getWritableDatabase();
 
         timeAndDateInfoLinearLayout = (LinearLayout) findViewById(R.id.time_and_date_ll);
 
@@ -72,13 +75,16 @@ public class AddNewToDoActivity extends AppCompatActivity {
 
         aSwitch = (Switch) findViewById(R.id.switch1);
 
-//        cursor = getAllToDo();
-
         mTimeDateMessage = (TextView) findViewById(R.id.date_time_tv);
 
         enterToDoEditText = (EditText) findViewById(R.id.enter_todo_et);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        aSwitch = (Switch) findViewById(R.id.switch1);
+        titleEditText = (EditText) findViewById(R.id.enter_todo_et);
+        dateEditText = (EditText) findViewById(R.id.date_et);
+        timeEditText = (EditText) findViewById(R.id.time_et);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar1);
         setSupportActionBar(toolbar);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -152,14 +158,55 @@ public class AddNewToDoActivity extends AppCompatActivity {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (aSwitch.isChecked()) {
-                    setReminderAndToDo();
+                if (titleEditText.getText().length() == 0) {
+                    Toast.makeText(AddNewToDoActivity.this, "Please enter title for your ToDo", Toast.LENGTH_SHORT).show();
+                    return;
                 } else {
-                    setToDoWithoutReminder();
+                    if (aSwitch.isChecked()) {
+                        if (dateEditText.getText().length() == 0) {
+                            if (timeEditText.getText().length() == 0) {
+                                Toast.makeText(AddNewToDoActivity.this,
+                                        "Please enter the date and time you want to set your reminder to",
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            } else {
+                                Toast.makeText(AddNewToDoActivity.this,
+                                        "Please enter the date you want to set your reminder to",
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        } else if (timeEditText.getText().length() == 0) {
+                            if (dateEditText.getText().length() == 0) {
+                                Toast.makeText(AddNewToDoActivity.this,
+                                        "Please enter the date and time you want to set your reminder to",
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            } else {
+                                Toast.makeText(AddNewToDoActivity.this,
+                                        "Please enter the time you want to set your reminder to",
+                                        Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                        }
+                        addNewToDo(titleEditText.getText().toString(),
+                                dateEditText.getText().toString(),
+                                timeEditText.getText().toString(),
+                                true);
+                    } else {
+                        dateEditText.setText(null);
+                        timeEditText.setText(null);
+                        addNewToDo(titleEditText.getText().toString(),
+                                dateEditText.getText().toString(),
+                                timeEditText.getText().toString(),
+                                false);
+                    }
                 }
+
+                Intent intent = new Intent(AddNewToDoActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
-
+//
         aSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,31 +219,41 @@ public class AddNewToDoActivity extends AppCompatActivity {
         });
     }
 
+    private long addNewToDo(String title, String selectedDate, String selectedTime, boolean checked) {
+        ContentValues cv = new ContentValues();
+        cv.put(ToDoListContract.ToDoListEntry.COLUMN_TITLE, title);
+        cv.put(ToDoListContract.ToDoListEntry.COLUMN_TODO_DATE, selectedDate);
+        cv.put(ToDoListContract.ToDoListEntry.COLUMN_TODO_TIME, selectedTime);
+        cv.put(ToDoListContract.ToDoListEntry.COLUMN_IS_REMINDER, checked);
 
-    public void setReminderAndToDo() {
-        if (selectedDate != null && selectedTime != null) {
-            String finalMessage;
-            finalMessage = "Reminder set for " + selectedDate + ", " + selectedTime;
-            mTimeDateMessage.setText(finalMessage);
-
-            addNewToDo(enterToDoEditText.getText().toString(), selectedDate, selectedTime, aSwitch.isChecked());
-
-
-        } else if (selectedTime == null && selectedDate != null) {
-            Toast.makeText(this, "Please enter time", Toast.LENGTH_SHORT).show();
-        } else if (selectedTime != null)
-        {
-            if(selectedDate == null)
-            Toast.makeText(this, "Please enter the date", Toast.LENGTH_SHORT).show();
-        } else if (selectedTime == null && selectedDate == null)
-            addNewToDo(enterToDoEditText.getText().toString(), null, null, false);
+//        Toast.makeText(this, "ADDED", Toast.LENGTH_SHORT).show();
+        return mDb.insert(ToDoListContract.ToDoListEntry.TABLE_NAME, null, cv);
     }
-
-
-    public void setToDoWithoutReminder() {
-        Toast.makeText(this, "Todo Saved without setting reminder", Toast.LENGTH_SHORT).show();
-    }
-
+//
+//
+//    public void setReminderAndToDo() {
+//        if (selectedDate != null && selectedTime != null) {
+//            String finalMessage;
+//            finalMessage = "Reminder set for " + selectedDate + ", " + selectedTime;
+//            mTimeDateMessage.setText(finalMessage);
+//
+//            addNewToDo(enterToDoEditText.getText().toString(), selectedDate, selectedTime, aSwitch.isChecked());
+//
+//
+//        } else if (selectedTime == null && selectedDate != null) {
+//            Toast.makeText(this, "Please enter time", Toast.LENGTH_SHORT).show();
+//        } else if (selectedTime != null)
+//        {
+//            if(selectedDate == null)
+//            Toast.makeText(this, "Please enter the date", Toast.LENGTH_SHORT).show();
+//        } else if (selectedTime == null && selectedDate == null)
+//            addNewToDo(enterToDoEditText.getText().toString(), null, null, false);
+//    }
+//
+//
+//    public void setToDoWithoutReminder() {
+//        Toast.makeText(this, "Todo Saved without setting reminder", Toast.LENGTH_SHORT).show();
+//    }
 
 
 //    void hideKeyboard(EditText editText) {
